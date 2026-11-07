@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S.T.A.L.K.E.R. Mobile</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: #101510;
+    color: #d5d5c5;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+.menu {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background:
+        linear-gradient(rgba(5,10,5,.65), rgba(5,10,5,.95)),
+        radial-gradient(#53634b, #101510);
+    padding: 20px;
+}
+
+h1 {
+    font-size: 36px;
+    color: #a8b58b;
+    text-align: center;
+    letter-spacing: 3px;
+    text-shadow: 0 0 15px #52613c;
+}
+
+.subtitle {
+    color: #aaa;
+    margin-bottom: 40px;
+}
+
+button {
+    width: 230px;
+    padding: 16px;
+    margin: 8px;
+    background: #252d22;
+    color: #d5d5c5;
+    border: 1px solid #65734d;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+button:active {
+    background: #455438;
+}
+
+#game {
+    display: none;
+    height: 100%;
+    padding: 20px;
+    background: #172018;
+}
+
+#message {
+    margin-top: 30px;
+    color: #a8b58b;
+    font-size: 18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="menu" id="menu">
+
+    <h1>S.T.A.L.K.E.R.</h1>
+
+    <div class="subtitle">
+        MOBILE SURVIVAL
+    </div>
+
+    <button onclick="startGame()">
+        НАЧАТЬ ИГРУ
+    </button>
+
+    <button onclick="showInfo()">
+        ОБ ИГРЕ
+    </button>
+
+    <button onclick="showSettings()">
+        НАСТРОЙКИ
+    </button>
+
+    <div id="info"></div>
+
+</div>
+
+<div id="game">
+
+    <h2>ЗОНА</h2>
+
+    <p>Локация: Бункер</p>
+
+    <p>Здоровье: 100</p>
+
+    <p>Снаряжение: Пусто</p>
+
+    <div id="message">
+        Ты находишься в бункере.
+    </div>
+
+    <button onclick="backMenu()">
+        В ГЛАВНОЕ МЕНЮ
+    </button>
+
+</div>
+
+<script>
+
+function startGame() {
+
+    document.getElementById("menu").style.display = "none";
+
+    document.getElementById("game").style.display = "block";
+
+    document.getElementById("message").innerText =
+        "Ты проснулся в бункере. Впереди неизвестная Зона.";
+
+}
+
+function backMenu() {
+
+    document.getElementById("game").style.display = "none";
+
+    document.getElementById("menu").style.display = "flex";
+
+}
+
+function showInfo() {
+
+    document.getElementById("info").innerText =
+        "Исследуй Зону, выполняй задания и выживай.";
+
+}
+
+function showSettings() {
+
+    document.getElementById("info").innerText =
+        "Настройки управления добавим позже.";
+
+}
+
+</script>
+
+</body>
+</html>
