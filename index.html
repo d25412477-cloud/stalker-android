@@ -3,7 +3,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>S.T.A.L.K.E.R. Mobile</title>
 
 <style>
@@ -13,64 +13,156 @@
 
 body {
     margin: 0;
-    height: 100vh;
     background: #101510;
-    color: #d5d5c5;
+    color: #d0d0c0;
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
 
-.menu {
-    height: 100%;
+#menu {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    background: linear-gradient(#182219, #080b08);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background:
-        linear-gradient(rgba(5,10,5,.65), rgba(5,10,5,.95)),
-        radial-gradient(#53634b, #101510);
-    padding: 20px;
 }
 
 h1 {
-    font-size: 36px;
-    color: #a8b58b;
+    color: #a6b58a;
     text-align: center;
+    font-size: 32px;
     letter-spacing: 3px;
-    text-shadow: 0 0 15px #52613c;
-}
-
-.subtitle {
-    color: #aaa;
-    margin-bottom: 40px;
 }
 
 button {
-    width: 230px;
-    padding: 16px;
-    margin: 8px;
-    background: #252d22;
-    color: #d5d5c5;
-    border: 1px solid #65734d;
-    font-size: 18px;
-    cursor: pointer;
+    background: #273124;
+    border: 1px solid #71805a;
+    color: white;
+    padding: 15px;
+    font-size: 17px;
+    border-radius: 5px;
 }
 
-button:active {
-    background: #455438;
+#start {
+    width: 230px;
+    margin-top: 30px;
 }
 
 #game {
     display: none;
+    position: fixed;
+    inset: 0;
+}
+
+canvas {
+    width: 100%;
     height: 100%;
-    padding: 20px;
-    background: #172018;
+    display: block;
+}
+
+#hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+#stats {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #101510bb;
+    padding: 10px;
+    font-size: 14px;
+}
+
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #ddd;
+}
+
+#controls {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+#move {
+    display: grid;
+    grid-template-columns: 60px 60px 60px;
+    grid-template-rows: 55px 55px;
+    gap: 5px;
+    pointer-events: auto;
+}
+
+#move button {
+    padding: 0;
+    font-size: 22px;
+    background: #202820cc;
+    touch-action: none;
+}
+
+#forward {
+    grid-column: 2;
+}
+
+#left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#back {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+#actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+#actions button {
+    min-width: 85px;
+    background: #202820cc;
+    touch-action: none;
+}
+
+#look {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    touch-action: none;
+}
+
+#controls {
+    z-index: 2;
 }
 
 #message {
-    margin-top: 30px;
-    color: #a8b58b;
-    font-size: 18px;
+    position: absolute;
+    bottom: 145px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #101510bb;
+    padding: 8px;
+    white-space: nowrap;
 }
 
 </style>
@@ -78,84 +170,430 @@ button:active {
 
 <body>
 
-<div class="menu" id="menu">
-
+<div id="menu">
     <h1>S.T.A.L.K.E.R.</h1>
-
-    <div class="subtitle">
-        MOBILE SURVIVAL
-    </div>
-
-    <button onclick="startGame()">
-        НАЧАТЬ ИГРУ
-    </button>
-
-    <button onclick="showInfo()">
-        ОБ ИГРЕ
-    </button>
-
-    <button onclick="showSettings()">
-        НАСТРОЙКИ
-    </button>
-
-    <div id="info"></div>
-
+    <p>SHADOW OF THE ZONE</p>
+    <button id="start" onclick="startGame()">НАЧАТЬ ИГРУ</button>
 </div>
 
 <div id="game">
 
-    <h2>ЗОНА</h2>
+    <canvas id="world"></canvas>
 
-    <p>Локация: Бункер</p>
+    <div id="look"></div>
 
-    <p>Здоровье: 100</p>
+    <div id="hud">
 
-    <p>Снаряжение: Пусто</p>
+        <div id="stats">
+            ЗДОРОВЬЕ: 100<br>
+            ЛОКАЦИЯ: ЗОНА<br>
+            <span id="position">X: 0</span>
+        </div>
 
-    <div id="message">
-        Ты находишься в бункере.
+        <div id="crosshair">+</div>
+
+        <div id="message">
+            Исследуй заброшенную деревню
+        </div>
+
+        <div id="controls">
+
+            <div id="move">
+                <button id="forward">▲</button>
+                <button id="left">◀</button>
+                <button id="back">▼</button>
+                <button id="right">▶</button>
+            </div>
+
+            <div id="actions">
+                <button onclick="interact()">ДЕЙСТВИЕ</button>
+                <button onclick="shoot()">ОГОНЬ</button>
+            </div>
+
+        </div>
+
     </div>
-
-    <button onclick="backMenu()">
-        В ГЛАВНОЕ МЕНЮ
-    </button>
 
 </div>
 
 <script>
 
+const canvas = document.getElementById("world");
+const ctx = canvas.getContext("2d");
+
+let W = 0;
+let H = 0;
+
+let player = {
+    x: 0,
+    z: 0,
+    angle: 0
+};
+
+let running = false;
+let moving = {};
+let objects = [];
+
+function resize() {
+
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+function createWorld() {
+
+    objects = [];
+
+    for (let i = 0; i < 45; i++) {
+
+        objects.push({
+            x: (Math.random() - 0.5) * 90,
+            z: 12 + Math.random() * 100,
+            type: Math.random() > 0.35 ? "tree" : "building",
+            size: 0.7 + Math.random() * 1.3
+        });
+
+    }
+
+}
+
+createWorld();
+
 function startGame() {
 
     document.getElementById("menu").style.display = "none";
-
     document.getElementById("game").style.display = "block";
 
+    player.x = 0;
+    player.z = 0;
+    player.angle = 0;
+
+    running = true;
+
+    resize();
+    draw();
+
+}
+
+function drawSky() {
+
+    let sky = ctx.createLinearGradient(0, 0, 0, H);
+
+    sky.addColorStop(0, "#52635c");
+    sky.addColorStop(0.55, "#879082");
+    sky.addColorStop(1, "#252c22");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "#a6a28b";
+    ctx.beginPath();
+    ctx.arc(W * 0.78, H * 0.18, 24, 0, Math.PI * 2);
+    ctx.fill();
+
+}
+
+function drawGround() {
+
+    ctx.fillStyle = "#34392b";
+
+    ctx.beginPath();
+    ctx.moveTo(0, H * 0.45);
+    ctx.lineTo(W, H * 0.45);
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.fill();
+
+    ctx.fillStyle = "#444737";
+
+    for (let i = 0; i < 25; i++) {
+
+        let x = (i * 173) % W;
+        let y = H * 0.48 + i * 13;
+
+        ctx.fillRect(x, y, 2 + i % 5, 2);
+
+    }
+
+}
+
+function project(x, z) {
+
+    let dx = x - player.x;
+    let dz = z - player.z;
+
+    let a = player.angle;
+
+    let forward = dx * Math.sin(a) + dz * Math.cos(a);
+    let side = dx * Math.cos(a) - dz * Math.sin(a);
+
+    if (forward < 1) return null;
+
+    let focal = W * 0.8;
+
+    let sx = W / 2 + side * focal / forward;
+    let sy = H * 0.45;
+
+    return {
+        x: sx,
+        y: sy,
+        scale: focal / forward,
+        depth: forward
+    };
+
+}
+
+function drawTree(obj) {
+
+    let p = project(obj.x, obj.z);
+
+    if (!p) return;
+    if (p.x < -100 || p.x > W + 100) return;
+
+    let size = p.scale * obj.size;
+
+    if (size < 1) return;
+
+    ctx.fillStyle = "#292b20";
+
+    ctx.fillRect(
+        p.x - size * 0.08,
+        p.y - size * 1.3,
+        size * 0.16,
+        size * 1.3
+    );
+
+    ctx.fillStyle = "#303e2b";
+
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y - size * 2.8);
+    ctx.lineTo(p.x - size, p.y - size * 0.3);
+    ctx.lineTo(p.x + size, p.y - size * 0.3);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#465438";
+
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y - size * 2.2);
+    ctx.lineTo(p.x - size * 0.7, p.y - size * 0.4);
+    ctx.lineTo(p.x + size * 0.7, p.y - size * 0.4);
+    ctx.closePath();
+    ctx.fill();
+
+}
+
+function drawBuilding(obj) {
+
+    let p = project(obj.x, obj.z);
+
+    if (!p) return;
+    if (p.x < -200 || p.x > W + 200) return;
+
+    let size = p.scale * obj.size;
+
+    if (size < 1) return;
+
+    let width = size * 1.5;
+    let height = size * 1.1;
+
+    ctx.fillStyle = "#45463b";
+
+    ctx.fillRect(
+        p.x - width / 2,
+        p.y - height,
+        width,
+        height
+    );
+
+    ctx.fillStyle = "#292c26";
+
+    ctx.beginPath();
+
+    ctx.moveTo(p.x - width * 0.6, p.y - height);
+    ctx.lineTo(p.x, p.y - height * 1.5);
+    ctx.lineTo(p.x + width * 0.6, p.y - height);
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.fillStyle = "#171b17";
+
+    ctx.fillRect(
+        p.x - width * 0.15,
+        p.y - height * 0.6,
+        width * 0.3,
+        height * 0.6
+    );
+
+}
+
+function drawWeapon() {
+
+    let x = W * 0.58;
+    let y = H * 0.78;
+
+    ctx.fillStyle = "#191b18";
+
+    ctx.fillRect(x, y, W * 0.12, H * 0.18);
+
+    ctx.fillStyle = "#41443a";
+
+    ctx.fillRect(
+        x + W * 0.035,
+        y - H * 0.06,
+        W * 0.045,
+        H * 0.16
+    );
+
+    ctx.fillStyle = "#242722";
+
+    ctx.fillRect(
+        x + W * 0.05,
+        y - H * 0.15,
+        W * 0.02,
+        H * 0.12
+    );
+
+}
+
+function draw() {
+
+    if (!running) return;
+
+    ctx.clearRect(0, 0, W, H);
+
+    drawSky();
+    drawGround();
+
+    let sorted = objects.slice().sort((a, b) => b.z - a.z);
+
+    for (let obj of sorted) {
+
+        if (obj.type === "tree") {
+            drawTree(obj);
+        } else {
+            drawBuilding(obj);
+        }
+
+    }
+
+    drawWeapon();
+
+    document.getElementById("position").innerText =
+        "X: " + Math.round(player.x);
+
+    requestAnimationFrame(draw);
+
+}
+
+function update() {
+
+    if (!running) return;
+
+    let speed = 0.13;
+
+    if (moving.forward) {
+        player.x += Math.sin(player.angle) * speed;
+        player.z += Math.cos(player.angle) * speed;
+    }
+
+    if (moving.back) {
+        player.x -= Math.sin(player.angle) * speed;
+        player.z -= Math.cos(player.angle) * speed;
+    }
+
+    if (moving.left) {
+        player.angle -= 0.035;
+    }
+
+    if (moving.right) {
+        player.angle += 0.035;
+    }
+
+    requestAnimationFrame(update);
+
+}
+
+function bindMove(id, key) {
+
+    let button = document.getElementById(id);
+
+    button.addEventListener("pointerdown", function(e) {
+
+        e.preventDefault();
+        moving[key] = true;
+
+    });
+
+    button.addEventListener("pointerup", function() {
+        moving[key] = false;
+    });
+
+    button.addEventListener("pointercancel", function() {
+        moving[key] = false;
+    });
+
+    button.addEventListener("pointerleave", function() {
+        moving[key] = false;
+    });
+
+}
+
+bindMove("forward", "forward");
+bindMove("back", "back");
+bindMove("left", "left");
+bindMove("right", "right");
+
+let look = document.getElementById("look");
+
+let lastX = null;
+
+look.addEventListener("pointerdown", function(e) {
+
+    lastX = e.clientX;
+
+});
+
+look.addEventListener("pointermove", function(e) {
+
+    if (lastX === null) return;
+
+    let delta = e.clientX - lastX;
+
+    player.angle += delta * 0.005;
+
+    lastX = e.clientX;
+
+});
+
+look.addEventListener("pointerup", function() {
+    lastX = null;
+});
+
+look.addEventListener("pointercancel", function() {
+    lastX = null;
+});
+
+function interact() {
+
     document.getElementById("message").innerText =
-        "Ты проснулся в бункере. Впереди неизвестная Зона.";
+        "Ты исследуешь заброшенную деревню.";
 
 }
 
-function backMenu() {
+function shoot() {
 
-    document.getElementById("game").style.display = "none";
-
-    document.getElementById("menu").style.display = "flex";
-
-}
-
-function showInfo() {
-
-    document.getElementById("info").innerText =
-        "Исследуй Зону, выполняй задания и выживай.";
+    document.getElementById("message").innerText =
+        "Выстрел!";
 
 }
 
-function showSettings() {
-
-    document.getElementById("info").innerText =
-        "Настройки управления добавим позже.";
-
-}
+update();
 
 </script>
 
