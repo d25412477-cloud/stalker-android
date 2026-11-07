@@ -3,65 +3,88 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>S.T.A.L.K.E.R. Mobile</title>
 
 <style>
+
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     margin: 0;
-    background: #101510;
-    color: #d0d0c0;
+    background: #111610;
+    color: #d2d2c0;
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
 
+button {
+    color: #ddd;
+    background: #252d23;
+    border: 1px solid #677451;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 14px;
+    touch-action: none;
+}
+
+button:active {
+    background: #49583b;
+}
+
+/* MENU */
+
 #menu {
     position: fixed;
     inset: 0;
-    z-index: 5;
-    background: linear-gradient(#182219, #080b08);
+    z-index: 10;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(#101810dd, #050805),
+        #172018;
 }
 
-h1 {
-    color: #a6b58a;
+#menu h1 {
+    color: #a5b68b;
+    font-size: 35px;
     text-align: center;
-    font-size: 32px;
     letter-spacing: 3px;
+    text-shadow: 0 0 15px #586943;
 }
 
-button {
-    background: #273124;
-    border: 1px solid #71805a;
-    color: white;
-    padding: 15px;
-    font-size: 17px;
-    border-radius: 5px;
+#menu p {
+    color: #777;
+    letter-spacing: 4px;
 }
 
-#start {
-    width: 230px;
-    margin-top: 30px;
+.menu-button {
+    width: 240px;
+    margin-top: 15px;
 }
+
+/* GAME */
 
 #game {
-    display: none;
     position: fixed;
     inset: 0;
+    display: none;
 }
 
-canvas {
+#world {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    display: block;
 }
+
+/* HUD */
 
 #hud {
     position: absolute;
@@ -73,43 +96,68 @@ canvas {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: #101510bb;
     padding: 10px;
-    font-size: 14px;
+    background: #101510cc;
+    border: 1px solid #4a5142;
+    font-size: 13px;
+    line-height: 1.7;
 }
 
 #crosshair {
     position: absolute;
-    left: 50%;
     top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
     color: #ddd;
+    font-size: 23px;
+}
+
+#message {
+    position: absolute;
+    left: 50%;
+    bottom: 150px;
+    transform: translateX(-50%);
+    padding: 9px 12px;
+    background: #111711cc;
+    border: 1px solid #46513b;
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* TOUCH CONTROLS */
+
+#look {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    touch-action: none;
 }
 
 #controls {
     position: absolute;
-    bottom: 20px;
-    left: 15px;
-    right: 15px;
+    left: 12px;
+    right: 12px;
+    bottom: 18px;
     display: flex;
     justify-content: space-between;
     align-items: end;
+    z-index: 3;
+    pointer-events: none;
 }
 
-#move {
+#movement {
     display: grid;
-    grid-template-columns: 60px 60px 60px;
-    grid-template-rows: 55px 55px;
+    grid-template-columns: 58px 58px 58px;
+    grid-template-rows: 52px 52px;
     gap: 5px;
     pointer-events: auto;
 }
 
-#move button {
+#movement button {
     padding: 0;
-    font-size: 22px;
-    background: #202820cc;
-    touch-action: none;
+    font-size: 23px;
+    background: #172018dd;
 }
 
 #forward {
@@ -134,35 +182,54 @@ canvas {
 #actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     pointer-events: auto;
 }
 
 #actions button {
-    min-width: 85px;
-    background: #202820cc;
-    touch-action: none;
+    min-width: 90px;
+    background: #172018dd;
+    font-size: 13px;
+    padding: 13px 8px;
 }
 
-#look {
+#dialog {
+    display: none;
+    position: absolute;
+    z-index: 8;
+    left: 5%;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #151b15;
+    border: 1px solid #7a865c;
+    padding: 20px;
+    pointer-events: auto;
+}
+
+#dialog h2 {
+    color: #a7b78c;
+}
+
+#dialog button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#restart {
+    display: none;
     position: absolute;
     inset: 0;
-    z-index: 1;
-    touch-action: none;
+    z-index: 9;
+    background: #080b08ee;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
 }
 
-#controls {
-    z-index: 2;
-}
-
-#message {
-    position: absolute;
-    bottom: 145px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #101510bb;
-    padding: 8px;
-    white-space: nowrap;
+#restart button {
+    width: 230px;
 }
 
 </style>
@@ -170,11 +237,27 @@ canvas {
 
 <body>
 
+<!-- MAIN MENU -->
+
 <div id="menu">
+
     <h1>S.T.A.L.K.E.R.</h1>
+
     <p>SHADOW OF THE ZONE</p>
-    <button id="start" onclick="startGame()">НАЧАТЬ ИГРУ</button>
+
+    <button class="menu-button" onclick="startGame()">
+        НАЧАТЬ ИГРУ
+    </button>
+
+    <button class="menu-button" onclick="aboutGame()">
+        ОБ ИГРЕ
+    </button>
+
+    <div id="about"></div>
+
 </div>
+
+<!-- GAME -->
 
 <div id="game">
 
@@ -185,32 +268,83 @@ canvas {
     <div id="hud">
 
         <div id="stats">
-            ЗДОРОВЬЕ: 100<br>
-            ЛОКАЦИЯ: ЗОНА<br>
-            <span id="position">X: 0</span>
+            ЗДОРОВЬЕ: <span id="health">100</span><br>
+            ЛОКАЦИЯ: КОРДОН<br>
+            ПАТРОНЫ: <span id="ammo">30</span><br>
+            <span id="coordinates">X: 0 | Z: 0</span>
         </div>
 
         <div id="crosshair">+</div>
 
         <div id="message">
-            Исследуй заброшенную деревню
+            Добро пожаловать в Зону
         </div>
 
         <div id="controls">
 
-            <div id="move">
+            <div id="movement">
+
                 <button id="forward">▲</button>
+
                 <button id="left">◀</button>
+
                 <button id="back">▼</button>
+
                 <button id="right">▶</button>
+
             </div>
 
             <div id="actions">
-                <button onclick="interact()">ДЕЙСТВИЕ</button>
-                <button onclick="shoot()">ОГОНЬ</button>
+
+                <button onclick="shoot()">
+                    ОГОНЬ
+                </button>
+
+                <button onclick="talk()">
+                    ДЕЙСТВИЕ
+                </button>
+
             </div>
 
         </div>
+
+    </div>
+
+    <!-- TRADER -->
+
+    <div id="dialog">
+
+        <h2>Сидорович</h2>
+
+        <p id="dialogText">
+            Ну что, сталкер? Чего тебе нужно?
+        </p>
+
+        <button onclick="traderMission()">
+            ЕСТЬ ЗАДАНИЕ?
+        </button>
+
+        <button onclick="closeDialog()">
+            УЙТИ
+        </button>
+
+    </div>
+
+    <!-- GAME OVER -->
+
+    <div id="restart">
+
+        <h1>ТЫ ПОГИБ</h1>
+
+        <p>Зона оказалась опаснее, чем ты думал.</p>
+
+        <button onclick="startGame()">
+            НАЧАТЬ ЗАНОВО
+        </button>
+
+        <button onclick="backMenu()">
+            ГЛАВНОЕ МЕНЮ
+        </button>
 
     </div>
 
@@ -218,21 +352,42 @@ canvas {
 
 <script>
 
+/* =========================
+   GAME VARIABLES
+========================= */
+
 const canvas = document.getElementById("world");
 const ctx = canvas.getContext("2d");
 
 let W = 0;
 let H = 0;
 
+let running = false;
+
 let player = {
     x: 0,
     z: 0,
-    angle: 0
+    angle: 0,
+    health: 100,
+    ammo: 30
 };
 
-let running = false;
 let moving = {};
+
 let objects = [];
+
+let lastTime = 0;
+
+let mission = false;
+
+let trader = {
+    x: 0,
+    z: 18
+};
+
+/* =========================
+   RESIZE
+========================= */
 
 function resize() {
 
@@ -242,224 +397,612 @@ function resize() {
 }
 
 window.addEventListener("resize", resize);
+
 resize();
+
+/* =========================
+   WORLD GENERATION
+========================= */
 
 function createWorld() {
 
     objects = [];
 
-    for (let i = 0; i < 45; i++) {
+    // TREES
+
+    for (let i = 0; i < 65; i++) {
 
         objects.push({
-            x: (Math.random() - 0.5) * 90,
-            z: 12 + Math.random() * 100,
-            type: Math.random() > 0.35 ? "tree" : "building",
-            size: 0.7 + Math.random() * 1.3
+
+            x: (Math.random() - 0.5) * 100,
+
+            z: 15 + Math.random() * 100,
+
+            type: "tree",
+
+            size: 0.7 + Math.random() * 1.5
+
         });
 
     }
+
+    // BUILDINGS
+
+    for (let i = 0; i < 12; i++) {
+
+        let side = Math.random() > 0.5 ? 1 : -1;
+
+        objects.push({
+
+            x: side * (10 + Math.random() * 30),
+
+            z: 20 + Math.random() * 80,
+
+            type: "building",
+
+            size: 2 + Math.random() * 3
+
+        });
+
+    }
+
+    // ROAD
+
+    objects.push({
+
+        x: 0,
+
+        z: 35,
+
+        type: "road",
+
+        size: 1
+
+    });
 
 }
 
 createWorld();
 
+/* =========================
+   START GAME
+========================= */
+
 function startGame() {
 
     document.getElementById("menu").style.display = "none";
+
     document.getElementById("game").style.display = "block";
+
+    document.getElementById("restart").style.display = "none";
+
+    document.getElementById("dialog").style.display = "none";
 
     player.x = 0;
     player.z = 0;
     player.angle = 0;
+    player.health = 100;
+    player.ammo = 30;
+
+    mission = false;
+
+    moving = {};
 
     running = true;
 
+    lastTime = 0;
+
     resize();
-    draw();
+
+    updateStats();
+
+    setMessage("Ты находишься на Кордоне");
+
+    requestAnimationFrame(loop);
 
 }
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function loop(time) {
+
+    if (!running) return;
+
+    let delta = lastTime ? Math.min((time - lastTime) / 16.67, 2) : 1;
+
+    lastTime = time;
+
+    update(delta);
+
+    draw();
+
+    requestAnimationFrame(loop);
+
+}
+
+/* =========================
+   UPDATE
+========================= */
+
+function update(delta) {
+
+    if (!running) return;
+
+    let speed = 0.12 * delta;
+
+    if (moving.forward) {
+
+        player.x += Math.sin(player.angle) * speed;
+
+        player.z += Math.cos(player.angle) * speed;
+
+    }
+
+    if (moving.back) {
+
+        player.x -= Math.sin(player.angle) * speed;
+
+        player.z -= Math.cos(player.angle) * speed;
+
+    }
+
+    if (moving.left) {
+
+        player.angle -= 0.035 * delta;
+
+    }
+
+    if (moving.right) {
+
+        player.angle += 0.035 * delta;
+
+    }
+
+    updateStats();
+
+}
+
+/* =========================
+   HUD
+========================= */
+
+function updateStats() {
+
+    document.getElementById("health").innerText =
+        player.health;
+
+    document.getElementById("ammo").innerText =
+        player.ammo;
+
+    document.getElementById("coordinates").innerText =
+        "X: " + Math.round(player.x) +
+        " | Z: " + Math.round(player.z);
+
+}
+
+/* =========================
+   SKY
+========================= */
 
 function drawSky() {
 
     let sky = ctx.createLinearGradient(0, 0, 0, H);
 
-    sky.addColorStop(0, "#52635c");
-    sky.addColorStop(0.55, "#879082");
-    sky.addColorStop(1, "#252c22");
+    sky.addColorStop(0, "#354b4c");
+
+    sky.addColorStop(0.45, "#89948b");
+
+    sky.addColorStop(1, "#30362b");
 
     ctx.fillStyle = sky;
+
     ctx.fillRect(0, 0, W, H);
 
-    ctx.fillStyle = "#a6a28b";
+    // SUN
+
+    ctx.fillStyle = "#b6b49a";
+
     ctx.beginPath();
-    ctx.arc(W * 0.78, H * 0.18, 24, 0, Math.PI * 2);
+
+    ctx.arc(W * 0.8, H * 0.17, 20, 0, Math.PI * 2);
+
     ctx.fill();
+
+    // FOG
+
+    ctx.fillStyle = "#8b938b33";
+
+    ctx.fillRect(0, H * 0.35, W, H * 0.2);
 
 }
 
+/* =========================
+   GROUND
+========================= */
+
 function drawGround() {
 
-    ctx.fillStyle = "#34392b";
+    ctx.fillStyle = "#353b2b";
 
     ctx.beginPath();
+
     ctx.moveTo(0, H * 0.45);
+
     ctx.lineTo(W, H * 0.45);
+
     ctx.lineTo(W, H);
+
     ctx.lineTo(0, H);
+
+    ctx.closePath();
+
     ctx.fill();
 
-    ctx.fillStyle = "#444737";
+    // GROUND DETAILS
 
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 40; i++) {
 
-        let x = (i * 173) % W;
-        let y = H * 0.48 + i * 13;
+        let x = (i * 137) % W;
 
-        ctx.fillRect(x, y, 2 + i % 5, 2);
+        let y = H * 0.48 + (i * 19) % Math.max(1, H * 0.5);
+
+        ctx.fillStyle = i % 2 ? "#454936" : "#292f24";
+
+        ctx.fillRect(x, y, 3 + i % 7, 2);
 
     }
 
 }
 
+/* =========================
+   PROJECTION
+========================= */
+
 function project(x, z) {
 
     let dx = x - player.x;
+
     let dz = z - player.z;
 
     let a = player.angle;
 
-    let forward = dx * Math.sin(a) + dz * Math.cos(a);
-    let side = dx * Math.cos(a) - dz * Math.sin(a);
+    let forward =
+        dx * Math.sin(a) +
+        dz * Math.cos(a);
+
+    let side =
+        dx * Math.cos(a) -
+        dz * Math.sin(a);
 
     if (forward < 1) return null;
 
     let focal = W * 0.8;
 
-    let sx = W / 2 + side * focal / forward;
-    let sy = H * 0.45;
+    let scale = focal / forward;
 
     return {
-        x: sx,
-        y: sy,
-        scale: focal / forward,
+
+        x: W / 2 + side * scale,
+
+        y: H * 0.45,
+
+        scale: scale,
+
         depth: forward
+
     };
 
 }
+
+/* =========================
+   TREE
+========================= */
 
 function drawTree(obj) {
 
     let p = project(obj.x, obj.z);
 
     if (!p) return;
-    if (p.x < -100 || p.x > W + 100) return;
 
-    let size = p.scale * obj.size;
+    if (p.x < -150 || p.x > W + 150) return;
 
-    if (size < 1) return;
+    let s = p.scale * obj.size;
 
-    ctx.fillStyle = "#292b20";
+    if (s < 1) return;
+
+    // TRUNK
+
+    ctx.fillStyle = "#29271e";
 
     ctx.fillRect(
-        p.x - size * 0.08,
-        p.y - size * 1.3,
-        size * 0.16,
-        size * 1.3
+
+        p.x - s * 0.08,
+
+        p.y - s * 1.4,
+
+        s * 0.16,
+
+        s * 1.4
+
     );
 
-    ctx.fillStyle = "#303e2b";
+    // LEAVES
+
+    ctx.fillStyle = "#283b26";
 
     ctx.beginPath();
-    ctx.moveTo(p.x, p.y - size * 2.8);
-    ctx.lineTo(p.x - size, p.y - size * 0.3);
-    ctx.lineTo(p.x + size, p.y - size * 0.3);
+
+    ctx.moveTo(p.x, p.y - s * 3);
+
+    ctx.lineTo(p.x - s, p.y - s * 0.3);
+
+    ctx.lineTo(p.x + s, p.y - s * 0.3);
+
     ctx.closePath();
+
     ctx.fill();
 
-    ctx.fillStyle = "#465438";
+    ctx.fillStyle = "#405337";
 
     ctx.beginPath();
-    ctx.moveTo(p.x, p.y - size * 2.2);
-    ctx.lineTo(p.x - size * 0.7, p.y - size * 0.4);
-    ctx.lineTo(p.x + size * 0.7, p.y - size * 0.4);
+
+    ctx.moveTo(p.x, p.y - s * 2.4);
+
+    ctx.lineTo(p.x - s * 0.7, p.y - s * 0.4);
+
+    ctx.lineTo(p.x + s * 0.7, p.y - s * 0.4);
+
     ctx.closePath();
+
     ctx.fill();
 
 }
+
+/* =========================
+   BUILDING
+========================= */
 
 function drawBuilding(obj) {
 
     let p = project(obj.x, obj.z);
 
     if (!p) return;
-    if (p.x < -200 || p.x > W + 200) return;
 
-    let size = p.scale * obj.size;
+    if (p.x < -300 || p.x > W + 300) return;
 
-    if (size < 1) return;
+    let s = p.scale * obj.size;
 
-    let width = size * 1.5;
-    let height = size * 1.1;
+    if (s < 1) return;
 
-    ctx.fillStyle = "#45463b";
+    let width = s * 1.5;
+
+    let height = s * 0.8;
+
+    // WALL
+
+    ctx.fillStyle = "#49483d";
 
     ctx.fillRect(
+
         p.x - width / 2,
+
         p.y - height,
+
         width,
+
         height
+
     );
 
-    ctx.fillStyle = "#292c26";
+    // ROOF
+
+    ctx.fillStyle = "#292d26";
 
     ctx.beginPath();
 
     ctx.moveTo(p.x - width * 0.6, p.y - height);
+
     ctx.lineTo(p.x, p.y - height * 1.5);
+
     ctx.lineTo(p.x + width * 0.6, p.y - height);
+
     ctx.closePath();
 
     ctx.fill();
 
+    // WINDOW
+
     ctx.fillStyle = "#171b17";
 
     ctx.fillRect(
-        p.x - width * 0.15,
-        p.y - height * 0.6,
-        width * 0.3,
-        height * 0.6
+
+        p.x - width * 0.3,
+
+        p.y - height * 0.65,
+
+        width * 0.2,
+
+        height * 0.35
+
+    );
+
+    ctx.fillRect(
+
+        p.x + width * 0.1,
+
+        p.y - height * 0.65,
+
+        width * 0.2,
+
+        height * 0.35
+
     );
 
 }
+
+/* =========================
+   ROAD
+========================= */
+
+function drawRoad(obj) {
+
+    let p = project(obj.x, obj.z);
+
+    if (!p) return;
+
+    let scale = p.scale;
+
+    ctx.fillStyle = "#242821";
+
+    ctx.beginPath();
+
+    ctx.moveTo(W * 0.43, H * 0.45);
+
+    ctx.lineTo(W * 0.57, H * 0.45);
+
+    ctx.lineTo(W * 0.9, H);
+
+    ctx.lineTo(W * 0.1, H);
+
+    ctx.closePath();
+
+    ctx.fill();
+
+}
+
+/* =========================
+   TRADER
+========================= */
+
+function drawTrader() {
+
+    let p = project(trader.x, trader.z);
+
+    if (!p) return;
+
+    let s = p.scale;
+
+    if (s < 1) return;
+
+    // BODY
+
+    ctx.fillStyle = "#393b31";
+
+    ctx.fillRect(
+
+        p.x - s * 0.4,
+
+        p.y - s * 1.4,
+
+        s * 0.8,
+
+        s * 1.4
+
+    );
+
+    // HEAD
+
+    ctx.fillStyle = "#b2a18a";
+
+    ctx.beginPath();
+
+    ctx.arc(
+
+        p.x,
+
+        p.y - s * 1.6,
+
+        s * 0.3,
+
+        0,
+
+        Math.PI * 2
+
+    );
+
+    ctx.fill();
+
+    // LABEL
+
+    if (s > 5) {
+
+        ctx.fillStyle = "#ddd";
+
+        ctx.font = "12px Arial";
+
+        ctx.textAlign = "center";
+
+        ctx.fillText("ТОРГОВЕЦ", p.x, p.y - s * 2.2);
+
+    }
+
+}
+
+/* =========================
+   WEAPON
+========================= */
 
 function drawWeapon() {
 
     let x = W * 0.58;
-    let y = H * 0.78;
 
-    ctx.fillStyle = "#191b18";
+    let y = H * 0.8;
 
-    ctx.fillRect(x, y, W * 0.12, H * 0.18);
+    // STOCK
 
-    ctx.fillStyle = "#41443a";
+    ctx.fillStyle = "#242620";
 
     ctx.fillRect(
-        x + W * 0.035,
-        y - H * 0.06,
-        W * 0.045,
+
+        x,
+
+        y,
+
+        W * 0.13,
+
         H * 0.16
+
     );
 
-    ctx.fillStyle = "#242722";
+    // WEAPON BODY
+
+    ctx.fillStyle = "#45483c";
 
     ctx.fillRect(
-        x + W * 0.05,
-        y - H * 0.15,
-        W * 0.02,
-        H * 0.12
+
+        x + W * 0.03,
+
+        y - H * 0.06,
+
+        W * 0.06,
+
+        H * 0.16
+
+    );
+
+    // BARREL
+
+    ctx.fillStyle = "#22251f";
+
+    ctx.fillRect(
+
+        x + W * 0.045,
+
+        y - H * 0.16,
+
+        W * 0.025,
+
+        H * 0.13
+
     );
 
 }
+
+/* =========================
+   DRAW WORLD
+========================= */
 
 function draw() {
 
@@ -468,56 +1011,48 @@ function draw() {
     ctx.clearRect(0, 0, W, H);
 
     drawSky();
+
     drawGround();
 
-    let sorted = objects.slice().sort((a, b) => b.z - a.z);
+    // SORT BY DISTANCE
+
+    let sorted = objects.slice().sort((a, b) => {
+
+        return b.z - a.z;
+
+    });
 
     for (let obj of sorted) {
 
         if (obj.type === "tree") {
+
             drawTree(obj);
-        } else {
+
+        }
+
+        if (obj.type === "building") {
+
             drawBuilding(obj);
+
+        }
+
+        if (obj.type === "road") {
+
+            drawRoad(obj);
+
         }
 
     }
 
+    drawTrader();
+
     drawWeapon();
 
-    document.getElementById("position").innerText =
-        "X: " + Math.round(player.x);
-
-    requestAnimationFrame(draw);
-
 }
 
-function update() {
-
-    if (!running) return;
-
-    let speed = 0.13;
-
-    if (moving.forward) {
-        player.x += Math.sin(player.angle) * speed;
-        player.z += Math.cos(player.angle) * speed;
-    }
-
-    if (moving.back) {
-        player.x -= Math.sin(player.angle) * speed;
-        player.z -= Math.cos(player.angle) * speed;
-    }
-
-    if (moving.left) {
-        player.angle -= 0.035;
-    }
-
-    if (moving.right) {
-        player.angle += 0.035;
-    }
-
-    requestAnimationFrame(update);
-
-}
+/* =========================
+   MOVEMENT BUTTONS
+========================= */
 
 function bindMove(id, key) {
 
@@ -526,28 +1061,36 @@ function bindMove(id, key) {
     button.addEventListener("pointerdown", function(e) {
 
         e.preventDefault();
+
         moving[key] = true;
 
     });
 
-    button.addEventListener("pointerup", function() {
-        moving[key] = false;
-    });
+    function stop() {
 
-    button.addEventListener("pointercancel", function() {
         moving[key] = false;
-    });
 
-    button.addEventListener("pointerleave", function() {
-        moving[key] = false;
-    });
+    }
+
+    button.addEventListener("pointerup", stop);
+
+    button.addEventListener("pointercancel", stop);
+
+    button.addEventListener("pointerleave", stop);
 
 }
 
 bindMove("forward", "forward");
+
 bindMove("back", "back");
+
 bindMove("left", "left");
+
 bindMove("right", "right");
+
+/* =========================
+   CAMERA
+========================= */
 
 let look = document.getElementById("look");
 
@@ -565,35 +1108,159 @@ look.addEventListener("pointermove", function(e) {
 
     let delta = e.clientX - lastX;
 
-    player.angle += delta * 0.005;
+    player.angle += delta * 0.004;
 
     lastX = e.clientX;
 
 });
 
 look.addEventListener("pointerup", function() {
+
     lastX = null;
+
 });
 
 look.addEventListener("pointercancel", function() {
+
     lastX = null;
+
 });
 
-function interact() {
+/* =========================
+   MESSAGE
+========================= */
 
-    document.getElementById("message").innerText =
-        "Ты исследуешь заброшенную деревню.";
+function setMessage(text) {
+
+    document.getElementById("message").innerText = text;
 
 }
+
+/* =========================
+   SHOOT
+========================= */
 
 function shoot() {
 
-    document.getElementById("message").innerText =
-        "Выстрел!";
+    if (!running) return;
+
+    if (player.ammo <= 0) {
+
+        setMessage("Нет патронов!");
+
+        return;
+
+    }
+
+    player.ammo--;
+
+    updateStats();
+
+    setMessage("Выстрел!");
+
+    // FLASH
+
+    ctx.fillStyle = "#ffffff";
+
+    ctx.beginPath();
+
+    ctx.arc(W / 2, H / 2, 30, 0, Math.PI * 2);
+
+    ctx.fill();
 
 }
 
-update();
+/* =========================
+   INTERACTION
+========================= */
+
+function talk() {
+
+    if (!running) return;
+
+    let dx = trader.x - player.x;
+
+    let dz = trader.z - player.z;
+
+    let distance = Math.sqrt(dx * dx + dz * dz);
+
+    if (distance < 15) {
+
+        document.getElementById("dialog").style.display = "block";
+
+        setMessage("Ты разговариваешь с торговцем");
+
+    } else {
+
+        setMessage("Подойди ближе к торговцу");
+
+    }
+
+}
+
+function closeDialog() {
+
+    document.getElementById("dialog").style.display = "none";
+
+    setMessage("Исследуй Зону");
+
+}
+
+function traderMission() {
+
+    mission = true;
+
+    document.getElementById("dialogText").innerText =
+
+        "Найди припасы возле заброшенного здания. Будь осторожен.";
+
+    setMessage("Новое задание: найти припасы");
+
+}
+
+/* =========================
+   ABOUT
+========================= */
+
+function aboutGame() {
+
+    document.getElementById("about").innerText =
+
+        "Исследуй Зону, выполняй задания и выживай.";
+
+}
+
+/* =========================
+   GAME OVER
+========================= */
+
+function gameOver() {
+
+    running = false;
+
+    document.getElementById("restart").style.display = "flex";
+
+}
+
+/* =========================
+   MENU
+========================= */
+
+function backMenu() {
+
+    running = false;
+
+    document.getElementById("game").style.display = "none";
+
+    document.getElementById("menu").style.display = "flex";
+
+}
+
+/* =========================
+   INITIAL STATE
+========================= */
+
+resize();
 
 </script>
 
